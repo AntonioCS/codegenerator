@@ -106,20 +106,13 @@ abstract class AbstractCGType implements CGTypeInterface
         return empty($this->code) === false;
     }
 
-    /**
-     * @return static
-     */
-    public function clearCode() : self
+    public function clearCode() : static
     {
         $this->code = [];
         return $this;
     }
 
-    /**
-     * @param string $line
-     * @return static
-     */
-    public function addCodeLine(string $line) : self
+    public function addCodeLine(string $line) : static
     {
         $this->code[] = ($this->indentation > 0 ? str_repeat(' ', $this->indentation) : '') . $line;
         return $this;
@@ -148,8 +141,9 @@ abstract class AbstractCGType implements CGTypeInterface
     public function addCodeLineRepeated(string $line, int $times = 1) : self
     {
         if ($times > 0) {
-            while ($times--)
+            while ($times--) {
                 $this->addCodeLine($line);
+            }
         }
 
         return $this;
@@ -209,8 +203,9 @@ abstract class AbstractCGType implements CGTypeInterface
 
     public function unindent(int $indentationAmount = 1) : self
     {
-        while ($indentationAmount--)
+        while ($indentationAmount--) {
             $this->indentation -= self::DEFAULT_INDENTATION_AMOUNT;
+        }
         return $this;
     }
 

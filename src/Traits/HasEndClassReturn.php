@@ -10,6 +10,10 @@ trait HasEndClassReturn
 {
     public function end() : CGClass
     {
-        return $this->getParent();
+        if ($this->getParent()) {
+            return $this->getParent();
+        }
+
+        throw new \RuntimeException('No parent set');
     }
 }
