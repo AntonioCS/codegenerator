@@ -5,6 +5,8 @@ namespace Inflyter\CodeGenerator\Type;
 
 
 
+use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
+
 abstract class AbstractCGType implements CGTypeInterface
 {
     public const DEFAULT_INDENTATION_AMOUNT = 4;
@@ -24,8 +26,9 @@ abstract class AbstractCGType implements CGTypeInterface
 
     public function __construct(?AbstractCGType $parent, string $name, int $indentation = 0)
     {
-        if ($parent)
+        if ($parent) {
             $this->setParent($parent);
+        }
 
         $this->setName($name);
 
@@ -48,11 +51,7 @@ abstract class AbstractCGType implements CGTypeInterface
         return $this->parent !== null;
     }
 
-    /**
-     * @param string $name
-     * @return static
-     */
-    public function setName(string $name) : self
+    public function setName(string $name) : static
     {
         $this->name = str_replace(' ', '',
             ucwords(
@@ -89,14 +88,10 @@ abstract class AbstractCGType implements CGTypeInterface
         return $this->name !== null;
     }
 
-    /**
-     * @return static
-     * @throws \Exception
-     */
-    public function end() : self
+    public function end() : ?AbstractCGType
     {
         $this->mustHaveParent();
-        return $this->parent;
+        return $this->getParent();
     }
 
     abstract public function generateCode(): string;
@@ -272,7 +267,7 @@ abstract class AbstractCGType implements CGTypeInterface
      * @param string $text
      * @return static
      */
-    public function addTextToAnnotation(string $text)
+    public function addTextToAnnotation(string $text) : static
     {
         if ($this->hasAnnotation() === false) {
             $this->annotation = new CGAnnotation($this, $this->getIndentationAmount());
@@ -312,16 +307,16 @@ abstract class AbstractCGType implements CGTypeInterface
 
     protected function mustHaveParent() : void
     {
-        if ($this->getParent() === null) {
-            throw new \Exception('A parent must be set in ' . get_class($this));
+        //Due to conflicts with the return time I use the property directly
+        if ($this->parent === null) {
+            throw new \RuntimeException('A parent must be set in ' . get_class($this));
         }
-
     }
 
     protected function mustHaveName() : void
     {
         if ($this->getName() === null) {
-            throw new \Exception('A name must be set in ' . get_class($this));
+            throw new \RuntimeException('A name must be set in ' . get_class($this));
         }
     }
 

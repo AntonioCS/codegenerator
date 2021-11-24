@@ -13,7 +13,7 @@ class CGAnnotation extends AbstractCGType
     use UsesUseStatementsFromParentTrait;
     use UsesNamespaceFromParentTrait;
 
-    public function __construct(CGTypeInterface $parent, int $indentation = 0)
+    public function __construct(AbstractCGType $parent, int $indentation = 0)
     {
         parent::__construct($parent, '', $indentation);
         $this->mustHaveParent();

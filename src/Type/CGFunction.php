@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace Inflyter\CodeGenerator\Type;
 
-use Inflyter\CodeGenerator\Traits\AnnotationTrait;
+use Inflyter\CodeGenerator\Traits\HasAnnotationTrait;
 
 class CGFunction extends AbstractFunction
 {
-    public function addTextToAnnotation(string $text) : CGFunction
+    public function addTextToAnnotation(string $text) : static
     {
         parent::addTextToAnnotation($text);
         return $this;

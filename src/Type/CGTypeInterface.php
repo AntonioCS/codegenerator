@@ -4,12 +4,16 @@ declare(strict_types=1);
 namespace Inflyter\CodeGenerator\Type;
 
 
+use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
+
 interface CGTypeInterface
 {
     public function generateCode() : string;
     public function __toString() : string;
 
-    public function end() : AbstractCGType;
+    public function end() : ?AbstractCGType;
+    //static|CGClass|CGFunction|CGMethod|null;
+    //AbstractCGType;
 
     public function clearUseStatements(): object;
     public function addUseStatement(string $use) : object;
@@ -49,11 +53,7 @@ interface CGTypeInterface
     public function getName() : ?string;
     public function hasName() : bool;
 
-    /**
-     * @param string $text
-     * @return static
-     */
-    public function addTextToAnnotation(string $text);
+    public function addTextToAnnotation(string $text) : self;
     public function hasAnnotation() : bool;
     public function getAnnotation() : ?CGAnnotation;
 }

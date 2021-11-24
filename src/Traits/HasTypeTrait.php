@@ -6,28 +6,42 @@ namespace Inflyter\CodeGenerator\Traits;
 
 trait HasTypeTrait
 {
-    private ?string $type = null;
+    private array $types = [];
 
     private bool $isNull = false;
 
-    public function getType(): ?string
+    public function getTypes(): string
     {
-        return $this->type;
+        return implode('|', $this->types);
     }
 
-    /**
-     * @param string|null $type
-     * @return static
-     */
-    public function setType(?string $type): self
+    public function hasMultipleTypes() : bool
     {
-        $this->type = $type;
+        return count($this->types) > 1;
+    }
+
+    public function setTypes(?string $types): self
+    {
+        if ($types) {
+            $allTypes = explode('|', $types);
+
+            foreach ($allTypes as $type) {
+                $this->types[] = $type;
+            }
+        }
+
+        return $this;
+    }
+
+    public function addType(string $type) : static
+    {
+        $this->types[] = $type;
         return $this;
     }
 
     public function hasType() : bool
     {
-        return $this->type !== null && $this->type !== '';
+        return !empty($this->types);
     }
 
     public function isNull(): bool

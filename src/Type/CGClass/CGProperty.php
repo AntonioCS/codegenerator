@@ -3,15 +3,15 @@ declare(strict_types=1);
 
 namespace Inflyter\CodeGenerator\Type\CGClass;
 
+use Inflyter\CodeGenerator\Traits\HasEndClassReturn;
 use Inflyter\CodeGenerator\Traits\HasVisibilityTrait;
 use Inflyter\CodeGenerator\Type\AbstractParameter;
-use Inflyter\CodeGenerator\Type\CGAnnotation;
-use Inflyter\CodeGenerator\Type\CGClass;
 use Inflyter\CodeGenerator\Type\CGVisibilityInterface;
 
 class CGProperty extends AbstractParameter implements CGVisibilityInterface
 {
     use HasVisibilityTrait;
+    use HasEndClassReturn;
 
     public function generateCode(): string
     {

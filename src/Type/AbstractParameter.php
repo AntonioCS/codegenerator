@@ -7,6 +7,7 @@ namespace Inflyter\CodeGenerator\Type;
 use Inflyter\CodeGenerator\Traits\HasTypeTrait;
 use Inflyter\CodeGenerator\Traits\UsesUseStatementsFromParentTrait;
 use Inflyter\CodeGenerator\Traits\UsesNamespaceFromParentTrait;
+use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
 
 
 abstract class AbstractParameter extends AbstractCGType
@@ -24,22 +25,24 @@ abstract class AbstractParameter extends AbstractCGType
         $code = '';
 
         if ($this->hasType()) {
-            if ($this->isNull()) $code .= '?';
-            $code .= $this->getType() . ' ';
+            if ($this->isNull()) {
+                $code .= '?';
+            }
+            $code .= $this->getTypes() . ' ';
         }
 
         $code .= '$' . $this->getName();
 
         if ($this->hasDefaultValue()) {
             $code .= ' = ';
-            $surround = ($this->hasQuotesOnDefaultValue() || ($this->hasType() && $this->getType() === 'string')) ? "'" : null;
+            $surround = ($this->hasQuotesOnDefaultValue() || ($this->hasType() && $this->getTypes() === 'string')) ? "'" : null;
             $code .= $surround . $this->getDefaultValue() . $surround;
         }
 
         return $code;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         parent::setName($name);
         $this->name = lcfirst($this->name);
@@ -73,13 +76,8 @@ abstract class AbstractParameter extends AbstractCGType
         return $this;
     }
 
-//    public function getAnnotation() : CGAnnotation
+//    public function end() : CGMethod
 //    {
-//        throw new \Exception('This type is not permitted to have annotations');
-//    }
-//
-//    public function hasAnnotation() : bool
-//    {
-//        return false;
+//        return $this->getParent();
 //    }
 }

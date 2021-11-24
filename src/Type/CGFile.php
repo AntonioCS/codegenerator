@@ -13,31 +13,11 @@ class CGFile extends AbstractCGType
     private ?string $path;
 
     /**
-     * @var string[]
+     * @var array<array<string, string>>
      */
     private array $useStatements = [];
 
     private ?string $namespace = null;
-
-    /**
-     * @var CGClass[]
-     */
-    private array $classes;
-
-    /**
-     * @var array<int, int>
-     */
-    private array $mapper_classes;
-
-    /**
-     * @var CGFunction[]
-     */
-    private array $functions;
-
-    /**
-     * @var array<int, int[]>
-     */
-    private array $mapper_functions;
 
     public function __construct(?string $name = null, int $indentation = 0)
     {
@@ -60,9 +40,9 @@ class CGFile extends AbstractCGType
         return $this->strictTypes;
     }
 
-    public function setStrictTypes(bool $strictTypes): self
+    public function setStrictTypes(bool $state): self
     {
-        $this->strictTypes = $strictTypes;
+        $this->strictTypes = $state;
         return $this;
     }
 
@@ -71,9 +51,9 @@ class CGFile extends AbstractCGType
         return $this->addGeneratedMarker;
     }
 
-    public function setAddGeneratedMarker(bool $addGeneratedMarker): self
+    public function setAddGeneratedMarker(bool $state): self
     {
-        $this->addGeneratedMarker = $addGeneratedMarker;
+        $this->addGeneratedMarker = $state;
         return $this;
     }
 
@@ -83,7 +63,7 @@ class CGFile extends AbstractCGType
             if ($this->getPath() !== null) {
                 $filePath = $this->getPath();
             } else {
-                throw new \Exception('No path given to write file');
+                throw new \RuntimeException('No path given to write file');
             }
         }
 
@@ -105,20 +85,6 @@ class CGFile extends AbstractCGType
         return $func;
     }
 
-    // TODO: Implement this better function
-//    public function addClass(string $name): CGClass
-//    {
-//        $this->classes[] = new CGClass($this, $name, $this->indentation);
-//        $this->code[] = "<<CLASS_REPRESENTATION_$name>>";
-//
-//        $classKey = array_key_last($this->classes);
-//        $codeKey = array_key_last($this->code);
-//
-//        $this->mapper_classes[] = [$codeKey, $classKey];
-//
-//        return $this->classes[$classKey];
-//    }
-
     public function addClass(string $name) : CGClass
     {
         $cg = new CGClass($this, $name, $this->indentation);
@@ -133,10 +99,11 @@ class CGFile extends AbstractCGType
         /** @var ?CGClass $res */
         $res = $this->searchFor(CGClass::class, $name);
 
-        if ($res)
+        if ($res) {
             return $res;
+        }
 
-        throw new \Exception("Class named $name not found in CGFile");
+        throw new \RuntimeException("Class named $name not found in CGFile");
     }
 
     public function findFunction(string $name) : CGFunction
@@ -144,10 +111,11 @@ class CGFile extends AbstractCGType
         /** @var ?CGFunction $res */
         $res = $this->searchFor(CGFunction::class, $name);
 
-        if ($res)
+        if ($res) {
             return $res;
+        }
 
-        throw new \Exception('Function not found');
+        throw new \RuntimeException('Function not found');
     }
 
     public function findClassNoThrow(string $name) : ?CGClass
@@ -155,8 +123,9 @@ class CGFile extends AbstractCGType
         /** @var ?CGClass $res */
         $res = $this->searchFor(CGClass::class, $name);
 
-        if ($res)
+        if ($res) {
             return $res;
+        }
 
         return null;
     }
@@ -166,17 +135,18 @@ class CGFile extends AbstractCGType
         /** @var ?CGFunction $res */
         $res = $this->searchFor(CGFunction::class, $name);
 
-        if ($res)
+        if ($res) {
             return $res;
+        }
 
         return null;
     }
 
     private function searchFor(string $classType, string $name) : ?object
     {
-        foreach ($this->code as $codeline) {
-            if (is_object($codeline) && $codeline instanceof $classType && $codeline->getName() === $name) {
-                return $codeline;
+        foreach ($this->code as $codeLine) {
+            if (is_object($codeLine) && $codeLine instanceof $classType && $codeLine->getName() === $name) {
+                return $codeLine;
             }
         }
 
@@ -197,10 +167,23 @@ class CGFile extends AbstractCGType
             ->addBlankIf($this->hasNameSpace());
 
         if (!empty($this->hasUseStatements())) {
-            $uses = array_unique($this->getUseStatements());
+            $uses = $this->getUseStatements();
+            $preventDuplicates = [];
 
-            foreach ($uses as $use) {
-                $this->addCodeLine("use $use;");
+
+            foreach ($uses as [$use, $as]) {
+                if (isset($preventDuplicates[$use])) {
+                    continue;
+                }
+
+                $preventDuplicates[$use] = 1;
+
+                $code = "use $use";
+                if ($as !== null) {
+                    $code .= " as $as";
+                }
+                $code .= ';';
+                $this->addCodeLine($code);
             }
 
             $this->addBlank();
@@ -223,11 +206,12 @@ class CGFile extends AbstractCGType
 
     /**
      * @param string $use
+     * @param ?string $as
      * @return static
      */
-    public function addUseStatement(string $use) : self
+    public function addUseStatement(string $use, ?string $as = null) : self
     {
-        $this->useStatements[] = $use;
+        $this->useStatements[] = [$use, $as];
         return $this;
     }
 

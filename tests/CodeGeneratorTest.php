@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
 class CodeGeneratorTest extends TestCase
 {
 
-
     public function testGetGeneratedCode1() : void
     {
         $result = CodeGenerator::init()
@@ -33,11 +32,39 @@ class CodeGeneratorTest extends TestCase
     {
         $result = CodeGenerator::init()
             ->setStrictTypes(true)
-            ->addUseStatement('Myclass\\Inflyter\\Test')
+            ->addUseStatement('Myclass\Inflyter\Test')
             ->addCodeLine('echo "test";')
         ;
 
         self::assertEquals(CodeGeneratorExpectedResults::EXPECTED_CODE_3, $result);
+    }
+
+    public function testAddUseStatementWithAs() : void
+    {
+        $result = CodeGenerator::init()
+            ->setStrictTypes(true)
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addCodeLine('echo "test";')
+        ;
+
+        self::assertEquals(CodeGeneratorExpectedResults::EXPECTED_CODE_USE_WITH_AS, $result);
+    }
+
+    public function testEnsureNoDuplicateUseStatement() : void
+    {
+        $result = CodeGenerator::init()
+            ->setStrictTypes(true)
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addUseStatement('Myclass\Inflyter\Test', 'MyTest')
+            ->addUseStatement('Myclass\Inflyter\Test2')
+            ->addCodeLine('echo "test";')
+        ;
+
+        self::assertEquals(CodeGeneratorExpectedResults::EXPECTED_CODE_NO_USE_DUPLICATED, $result);
     }
 
     public function testWriteToFile() : void
@@ -45,7 +72,7 @@ class CodeGeneratorTest extends TestCase
         $fpath = '/tmp/test_CodeGenerator';
         CodeGenerator::init()
             ->setStrictTypes(true)
-            ->addUseStatement('Myclass\\Inflyter\\Test')
+            ->addUseStatement('Myclass\Inflyter\Test')
             ->addCodeLine('echo "test";')
             ->writeToFile($fpath)
         ;
@@ -116,8 +143,6 @@ echo \"test\";"
                ->generateCode()
        ;
 
-
-
         self::assertEquals(CodeGeneratorExpectedResults::EXPECTED_ANNOTATION_PROPRIETY_CODE, $result);
     }
 
@@ -168,7 +193,7 @@ echo \"test\";"
 
     public function testCodeGeneratorGettingClass() : void
     {
-        $classNameToFind = 'TextClas'; //Note: The name will have the first letter uppercased
+        $classNameToFind = 'TextClas'; //Note: The name will have the first letter uppercase
         $code = CodeGenerator::init()
             ->setAddGeneratedMarker(true)
             ->setStrictTypes(true)

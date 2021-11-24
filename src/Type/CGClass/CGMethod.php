@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Inflyter\CodeGenerator\Type\CGClass;
 
 
+use Inflyter\CodeGenerator\Traits\HasEndClassReturn;
 use Inflyter\CodeGenerator\Traits\HasVisibilityTrait;
 use Inflyter\CodeGenerator\Type\AbstractFunction;
 use Inflyter\CodeGenerator\Type\CGClass;
@@ -12,6 +13,7 @@ use Inflyter\CodeGenerator\Type\CGVisibilityInterface;
 class CGMethod extends AbstractFunction implements CGVisibilityInterface
 {
     use HasVisibilityTrait;
+    use HasEndClassReturn;
 
     public function generateCode(): string
     {
@@ -21,11 +23,6 @@ class CGMethod extends AbstractFunction implements CGVisibilityInterface
     public function setHasReturnType(bool $hasReturnType): CGMethod
     {
         return parent::setHasReturnType($hasReturnType);
-    }
-
-    public function end() : CGClass
-    {
-        return parent::end();
     }
 
     public function addParameter(string $name, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter

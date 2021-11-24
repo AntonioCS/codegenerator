@@ -9,17 +9,17 @@ interface CGVisibilityInterface
     /**
      * @return static
      */
-    public function setVisibilityProtected() : self;
+    public function setVisibilityProtected() : static;
 
     /**
      * @return static
      */
-    public function setVisibilityPrivate() : self;
+    public function setVisibilityPrivate() : static;
 
     /**
      * @return static
      */
-    public function setVisibilityPublic() : self;
+    public function setVisibilityPublic() : static;
 
     public function getVisibility() : string;
 

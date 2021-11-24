@@ -29,6 +29,25 @@ use Myclass\Inflyter\Test;
 echo "test";
 CODE;
 
+    public const EXPECTED_CODE_USE_WITH_AS = <<<CODE
+<?php
+declare(strict_types=1);
+
+use Myclass\Inflyter\Test as MyTest;
+
+echo "test";
+CODE;
+
+    public const EXPECTED_CODE_NO_USE_DUPLICATED = <<<CODE
+<?php
+declare(strict_types=1);
+
+use Myclass\Inflyter\Test as MyTest;
+use Myclass\Inflyter\Test2;
+
+echo "test";
+CODE;
+
     public const EXPECTED_CODE_FUNCTION = <<<CODE
 <?php
 declare(strict_types=1);

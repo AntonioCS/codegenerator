@@ -68,9 +68,10 @@ abstract class AbstractFunction extends AbstractCGType
         return implode("\n", $final_code);
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         parent::setName($name);
+        //setName will do other transformations so we need to ensure lcfirst is called after
         $this->name = lcfirst($this->name);
         return $this;
     }
@@ -151,8 +152,13 @@ abstract class AbstractFunction extends AbstractCGType
 
     protected function addParameterInternal(AbstractParameter $p, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
     {
-        if ($type) $p->setType($type);
-        if ($defaultValue) $p->setDefaultValue($defaultValue);
+        if ($type) {
+            $p->setTypes($type);
+        }
+        if ($defaultValue) {
+            $p->setDefaultValue($defaultValue);
+        }
+
         $p->setIsNull($isNull);
 
         $this->params[] = $p;

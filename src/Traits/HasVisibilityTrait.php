@@ -8,26 +8,17 @@ trait HasVisibilityTrait
 {
     private string $visibility = 'public';
 
-    /**
-     * @return static
-     */
-    public function setVisibilityProtected() : self
+    public function setVisibilityProtected() : static
     {
         return $this->setVisibility('protected');
     }
 
-    /**
-     * @return static
-     */
-    public function setVisibilityPrivate() : self
+    public function setVisibilityPrivate() : static
     {
         return $this->setVisibility('private');
     }
 
-    /**
-     * @return static
-     */
-    public function setVisibilityPublic() : self
+    public function setVisibilityPublic() : static
     {
         return $this->setVisibility('public');
     }
@@ -37,11 +28,7 @@ trait HasVisibilityTrait
         return $this->visibility;
     }
 
-    /**
-     * @param string $type
-     * @return static
-     */
-    private function setVisibility(string $type) : self
+    private function setVisibility(string $type) : static
     {
         $this->visibility = $type;
         return $this;

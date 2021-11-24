@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Inflyter\CodeGenerator\Type;
 
+use Inflyter\CodeGenerator\Traits\HasAnnotationTrait;
 use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
 use Inflyter\CodeGenerator\Type\CGClass\CGProperty;
 use Inflyter\CodeGenerator\Traits\UsesUseStatementsFromParentTrait;
@@ -12,6 +13,7 @@ class CGClass extends AbstractCGType
 {
     use UsesUseStatementsFromParentTrait;
     use UsesNamespaceFromParentTrait;
+    use HasAnnotationTrait;
 
     /**
      * @var CGProperty[]
@@ -78,7 +80,7 @@ class CGClass extends AbstractCGType
     {
         $p = new CGProperty($this, $name);
 
-        $p->setType($type);
+        $p->setTypes($type);
         $p->setDefaultValue($defaultValue);
         $p->setIsNull($isNull);
 
@@ -139,7 +141,7 @@ class CGClass extends AbstractCGType
             }
         }
 
-        throw new \Exception("Method name $name not found in class {$this->getName()}");
+        throw new \RuntimeException("Method name $name not found in class {$this->getName()}");
     }
 
     public function generateCode(): string
@@ -220,12 +222,6 @@ class CGClass extends AbstractCGType
         return !empty($this->classUses);
     }
 
-    public function addTextToAnnotation(string $text) : CGClass
-    {
-        parent::addTextToAnnotation($text);
-        return $this;
-    }
-
     /**
      * @param CGVisibilityInterface[] $objs
      */
@@ -248,8 +244,8 @@ class CGClass extends AbstractCGType
         );
     }
 
-    public function end() : CGFile
-    {
-        return parent::end();
-    }
+//    public function end() : static
+//    {
+//        return parent::end();
+//    }
 }
