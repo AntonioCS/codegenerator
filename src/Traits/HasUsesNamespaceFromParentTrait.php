@@ -4,21 +4,17 @@ declare(strict_types=1);
 namespace Inflyter\CodeGenerator\Traits;
 
 
-trait UsesNamespaceFromParentTrait
+trait HasUsesNamespaceFromParentTrait
 {
 
-    /**
-     * @param string $namespace
-     * @return static
-     */
-    public function setNamespace(string $namespace): self
+    public function setNamespace(string $namespace): static
     {
         $parent = $this->getParent();
 
         if ($parent !== null) {
             $parent->setNamespace($namespace);
         } else {
-            throw new \Exception('This class does not have a parent');
+            throw new \RuntimeException('This class does not have a parent');
         }
 
         return $this;
@@ -28,8 +24,9 @@ trait UsesNamespaceFromParentTrait
     {
         $parent = $this->getParent();
 
-        if ($parent !== null)
+        if ($parent !== null) {
             return $parent->getNameSpace();
+        }
 
         return null;
     }
@@ -38,8 +35,9 @@ trait UsesNamespaceFromParentTrait
     {
         $parent = $this->getParent();
 
-        if ($parent !== null)
+        if ($parent !== null) {
             return $parent->hasNameSpace();
+        }
 
         return false;
     }

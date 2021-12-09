@@ -5,7 +5,7 @@ namespace Inflyter\CodeGenerator\Traits;
 
 use Inflyter\CodeGenerator\Type\CGTypeInterface;
 
-trait UsesUseStatementsFromParentTrait
+trait HasUsesUseStatementsFromParentTrait
 {
     /**
      * @return static
@@ -13,8 +13,9 @@ trait UsesUseStatementsFromParentTrait
     public function clearUseStatements(): self
     {
         $parent = $this->getParent();
-        if ($parent !== null)
+        if ($parent !== null) {
             $parent->clearUseStatements();
+        }
 
         return $this;
     }
@@ -26,8 +27,9 @@ trait UsesUseStatementsFromParentTrait
     public function addUseStatement(string $use): self
     {
         $parent = $this->getParent();
-        if ($parent !== null)
+        if ($parent !== null) {
             $parent->addUseStatement($use);
+        }
 
         return $this;
     }
@@ -35,8 +37,9 @@ trait UsesUseStatementsFromParentTrait
     public function hasUseStatements(): bool
     {
         $parent = $this->getParent();
-        if ($parent !== null)
+        if ($parent !== null) {
             return $parent->hasUseStatements();
+        }
 
         return false;
     }
@@ -44,9 +47,10 @@ trait UsesUseStatementsFromParentTrait
     public function getUseStatements(): array
     {
         $parent = $this->getParent();
-        if ($parent !== null)
+        if ($parent !== null) {
             return $parent->getUseStatements();
+        }
 
-        throw new \Exception('This class does not have a parent');
+        throw new \RuntimeException('This class does not have a parent');
     }
 }

@@ -49,11 +49,7 @@ trait HasTypeTrait
         return $this->isNull;
     }
 
-    /**
-     * @param bool $isNull
-     * @return static
-     */
-    public function setIsNull(bool $isNull): self
+    public function setIsNull(bool $isNull): static
     {
         $this->isNull = $isNull;
         return $this;
