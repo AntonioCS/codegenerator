@@ -10,4 +10,15 @@ use Inflyter\CodeGenerator\Type\AbstractParameter;
 class CGMethodParameter extends AbstractParameter
 {
     use HasAnnotationTrait;
+
+    public function end() : CGMethod
+    {
+        if ($this->getParent()) {
+            /** @var CGMethod $parent */
+            $parent = $this->getParent();
+            return $parent;
+        }
+
+        throw new \RuntimeException('No parent set');
+    }
 }

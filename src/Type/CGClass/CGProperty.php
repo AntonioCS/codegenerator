@@ -19,6 +19,7 @@ class CGProperty extends AbstractParameter implements CGVisibilityInterface
         $this->clearCode();
 
         $this->processAnnotation();
+        $this->processAttribute();
 
         if ($this->hasCode()) {
             $code = implode("\n", $this->code) . "\n" . $code;

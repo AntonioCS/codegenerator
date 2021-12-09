@@ -145,7 +145,7 @@ class CGFile extends AbstractCGType
     private function searchFor(string $classType, string $name) : ?object
     {
         foreach ($this->code as $codeLine) {
-            if (is_object($codeLine) && $codeLine instanceof $classType && $codeLine->getName() === $name) {
+            if ($codeLine instanceof $classType && $codeLine->getName() === $name) {
                 return $codeLine;
             }
         }
@@ -169,7 +169,6 @@ class CGFile extends AbstractCGType
         if (!empty($this->hasUseStatements())) {
             $uses = $this->getUseStatements();
             $preventDuplicates = [];
-
 
             foreach ($uses as [$use, $as]) {
                 if (isset($preventDuplicates[$use])) {

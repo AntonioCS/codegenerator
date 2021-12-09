@@ -5,15 +5,15 @@ namespace Inflyter\CodeGenerator\Type;
 
 
 use Inflyter\CodeGenerator\Traits\HasTypeTrait;
-use Inflyter\CodeGenerator\Traits\UsesUseStatementsFromParentTrait;
-use Inflyter\CodeGenerator\Traits\UsesNamespaceFromParentTrait;
+use Inflyter\CodeGenerator\Traits\HasUsesUseStatementsFromParentTrait;
+use Inflyter\CodeGenerator\Traits\HasUsesNamespaceFromParentTrait;
 use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
 
 
 abstract class AbstractParameter extends AbstractCGType
 {
-    use UsesUseStatementsFromParentTrait;
-    use UsesNamespaceFromParentTrait;
+    use HasUsesUseStatementsFromParentTrait;
+    use HasUsesNamespaceFromParentTrait;
     use HasTypeTrait;
 
     private ?string $defaultValue = null;

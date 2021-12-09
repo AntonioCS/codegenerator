@@ -4,13 +4,13 @@ declare(strict_types=1);
 namespace Inflyter\CodeGenerator\Type;
 
 
-use Inflyter\CodeGenerator\Traits\UsesUseStatementsFromParentTrait;
-use Inflyter\CodeGenerator\Traits\UsesNamespaceFromParentTrait;
+use Inflyter\CodeGenerator\Traits\HasUsesUseStatementsFromParentTrait;
+use Inflyter\CodeGenerator\Traits\HasUsesNamespaceFromParentTrait;
 
 abstract class AbstractFunction extends AbstractCGType
 {
-    use UsesUseStatementsFromParentTrait;
-    use UsesNamespaceFromParentTrait;
+    use HasUsesUseStatementsFromParentTrait;
+    use HasUsesNamespaceFromParentTrait;
 
     private bool $isAnonymous = false;
 
@@ -53,6 +53,7 @@ abstract class AbstractFunction extends AbstractCGType
         }
 
         $this->processAnnotation();
+        $this->processAttribute();
 
         $this
             ->addCodeLine($functionHeader)

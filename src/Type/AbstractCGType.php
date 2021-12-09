@@ -24,6 +24,8 @@ abstract class AbstractCGType implements CGTypeInterface
 
     private ?CGAnnotation $annotation = null;
 
+    private ?CGAttribute $attribute = null;
+
     public function __construct(?AbstractCGType $parent, string $name, int $indentation = 0)
     {
         if ($parent) {
@@ -112,7 +114,12 @@ abstract class AbstractCGType implements CGTypeInterface
         return $this;
     }
 
-    public function addCodeLine(string $line) : static
+    public function isPreviousCodeLineEmpty() : bool
+    {
+        return $this->code[count($this->code) -1] === '';
+    }
+
+    public function addCodeLine(string|int|float $line) : static
     {
         $this->code[] = ($this->indentation > 0 ? str_repeat(' ', $this->indentation) : '') . $line;
         return $this;
@@ -149,7 +156,7 @@ abstract class AbstractCGType implements CGTypeInterface
         return $this;
     }
 
-    public function addCodeToLastLine(string $text) : self
+    public function addCodeToLastLine(string|int|float $text) : self
     {
         $last = count($this->code) - 1;
         $this->code[$last] .= $text;
@@ -187,8 +194,9 @@ abstract class AbstractCGType implements CGTypeInterface
 
     public function indent(int $indentationAmount = 1) : self
     {
-        while ($indentationAmount--)
+        while ($indentationAmount--) {
             $this->indentation += self::DEFAULT_INDENTATION_AMOUNT;
+        }
         return $this;
     }
 
@@ -254,14 +262,12 @@ abstract class AbstractCGType implements CGTypeInterface
 
     public function addBlankIf(bool $cond, int $blanks = 1) : self
     {
-        if ($cond) $this->addBlank($blanks);
+        if ($cond) {
+            $this->addBlank($blanks);
+        }
         return $this;
     }
 
-    /**
-     * @param string $text
-     * @return static
-     */
     public function addTextToAnnotation(string $text) : static
     {
         if ($this->hasAnnotation() === false) {
@@ -294,6 +300,38 @@ abstract class AbstractCGType implements CGTypeInterface
         }
     }
 
+    public function addAttribute(object $attribute, bool $addUseStatement = true) : static
+    {
+        if ($this->hasAttribute() === false) {
+            $this->attribute = new CGAttribute($this, $this->getIndentationAmount());
+        }
+
+        $this->attribute->addAttributeObject($attribute, $addUseStatement);
+
+        return $this;
+    }
+
+    public function getAttribute() : ?CGAttribute
+    {
+        if ($this->hasAttribute()) {
+            return $this->attribute;
+        }
+
+        return null;
+    }
+
+    public function hasAttribute() : bool
+    {
+        return $this->attribute !== null;
+    }
+
+    protected function processAttribute() : void
+    {
+        if ($this->hasAttribute()) {
+            $this->addCodeBlock($this->getAttribute()->generateCode());
+        }
+    }
+
     protected function mustHaveParentAndName() : void
     {
         $this->mustHaveParent();
@@ -313,6 +351,11 @@ abstract class AbstractCGType implements CGTypeInterface
         if ($this->getName() === null) {
             throw new \RuntimeException('A name must be set in ' . get_class($this));
         }
+    }
+
+    protected function getFormattedCode() : string
+    {
+        return implode("\n", $this->code);
     }
 
 //    WIP

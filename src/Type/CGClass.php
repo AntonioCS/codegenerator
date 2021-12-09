@@ -6,13 +6,13 @@ namespace Inflyter\CodeGenerator\Type;
 use Inflyter\CodeGenerator\Traits\HasAnnotationTrait;
 use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
 use Inflyter\CodeGenerator\Type\CGClass\CGProperty;
-use Inflyter\CodeGenerator\Traits\UsesUseStatementsFromParentTrait;
-use Inflyter\CodeGenerator\Traits\UsesNamespaceFromParentTrait;
+use Inflyter\CodeGenerator\Traits\HasUsesUseStatementsFromParentTrait;
+use Inflyter\CodeGenerator\Traits\HasUsesNamespaceFromParentTrait;
 
 class CGClass extends AbstractCGType
 {
-    use UsesUseStatementsFromParentTrait;
-    use UsesNamespaceFromParentTrait;
+    use HasUsesUseStatementsFromParentTrait;
+    use HasUsesNamespaceFromParentTrait;
     use HasAnnotationTrait;
 
     /**
@@ -161,6 +161,10 @@ class CGClass extends AbstractCGType
             $this->addCodeLine($this->getAnnotation()->generateCode());
         }
 
+        if ($this->hasAttribute()) {
+            $this->addCodeLine($this->getAttribute()->generateCode());
+        }
+
         $this
             ->addCodeLine($classHeader)
             ->addScopeOpen()
@@ -203,7 +207,7 @@ class CGClass extends AbstractCGType
             ->addBlank()
         ;
 
-        return implode("\n", $this->code);
+        return $this->getFormattedCode();
     }
 
     public function addClassUse(string $use) : self
