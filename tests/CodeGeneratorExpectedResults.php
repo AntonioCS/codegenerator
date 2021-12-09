@@ -120,6 +120,50 @@ function test(): void
 
 CODE;
 
+    public const EXPECTED_ATTRIBUTE_CODE = <<<CODE
+<?php
+
+use Inflyter\CodeGenerator\Tests\MyTestAttribute;
+
+#[MyTestAttribute(
+    value : 1,
+    value2 : 'Inflyter\CodeGenerator\Tests\CodeGeneratorTest',
+    value3: [
+            '1','3',4,
+    ],
+    value4: [
+            'item1' => 123,
+            'item2' => 'text',
+            'item3' => [
+                    'subItem1' => 123,
+                    'subItem2' => 'text',
+            ],
+    ],
+    )]
+class Test
+{
+    
+}
+
+CODE;
+
+    public const EXPECTED_ATTRIBUTE_IN_METHOD_CODE = <<<CODE
+<?php
+
+use Inflyter\CodeGenerator\Tests\MyTestAttribute;
+
+class Test
+{
+    
+    #[MyTestAttribute]
+    public \$propWithAttribute;
+    
+}
+
+CODE;
+
+
+
     public const EXPECTED_ARRAY_CODE = <<<CODE
 \$data = [
     "App\Entity\Shop\BaseProduct" => [

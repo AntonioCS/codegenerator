@@ -245,4 +245,56 @@ echo \"test\";"
 //
 //        dd($code);
 //    }
+    public function testAttributes() : void
+    {
+        $result = CodeGenerator::init()
+            ->addClass('test')
+            ->addAttribute(new MyTestAttribute(
+                value: 1,
+                value2: __CLASS__,
+                value3: ['1', '3', 4],
+                value4: [
+                    'item1' => 123,
+                    'item2' => 'text',
+                    'item3' => [
+                        'subItem1' => 123,
+                        'subItem2' => 'text',
+                    ]
+                ]
+            ))
+            ->end()
+            ->generateCode()
+        ;
+
+        self::assertEquals(CodeGeneratorExpectedResults::EXPECTED_ATTRIBUTE_CODE, $result);
+    }
+
+    public function testAttributesInProperties() : void
+    {
+        $result = CodeGenerator::init()
+            ->addClass('test')
+                ->addProperty('propWithAttribute')
+                ->addAttribute(new MyTestAttribute())
+                ->end()
+            ->end()
+            ->generateCode()
+        ;
+
+        self::assertEquals(CodeGeneratorExpectedResults::EXPECTED_ATTRIBUTE_IN_METHOD_CODE, $result);
+    }
+
+}
+
+#[Attribute]
+class MyTestAttribute
+{
+    public function __construct(
+        public ?int $value = null,
+        public ?string $value2 = null,
+        public ?array $value3 = null,
+        public ?array $value4 = null
+    )
+    {
+
+    }
 }
