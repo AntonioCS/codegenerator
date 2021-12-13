@@ -292,7 +292,8 @@ class MyTestAttribute
         public ?int $value = null,
         public ?string $value2 = null,
         public ?array $value3 = null,
-        public ?array $value4 = null
+        public ?array $value4 = null,
+        public ?array $value5 = []
     )
     {
 
