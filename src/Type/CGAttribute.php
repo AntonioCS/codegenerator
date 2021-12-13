@@ -49,6 +49,9 @@ class CGAttribute extends AbstractCGType
     {
         foreach ($data as $v) {
             if ($v !== null) {
+                if (is_array($v) && empty($v)) {
+                    continue;
+                }
                 return true;
             }
         }
@@ -80,7 +83,7 @@ class CGAttribute extends AbstractCGType
     {
         $this->indent();
         foreach ($values as $k => $v) {
-            if ($v === null) {
+            if ($v === null || (is_array($v) && empty($v))) {
                 continue;
             }
 
