@@ -20,23 +20,30 @@ abstract class AbstractParameter extends AbstractCGType
 
     private bool $hasQuotesOnDefaultValue = false;
 
+    protected bool $ignoreType = false;
+    protected bool $noDollarSign = false;
+
     public function generateCode(): string
     {
         $code = '';
+        $hasTypeAndIsNull = false;
 
-        if ($this->hasType()) {
+        if (!$this->ignoreType && $this->hasType()) {
             if ($this->isNull()) {
+                $hasTypeAndIsNull = true;
                 $code .= '?';
             }
             $code .= $this->getTypes() . ' ';
         }
 
-        $code .= '$' . $this->getName();
+        $code .= (!$this->noDollarSign ? '$' : null) . $this->getName();
 
         if ($this->hasDefaultValue()) {
             $code .= ' = ';
             $surround = ($this->hasQuotesOnDefaultValue() || ($this->hasType() && $this->getTypes() === 'string')) ? "'" : null;
             $code .= $surround . $this->getDefaultValue() . $surround;
+        } elseif ($hasTypeAndIsNull) {
+            $code .= ' = null';
         }
 
         return $code;
@@ -76,8 +83,4 @@ abstract class AbstractParameter extends AbstractCGType
         return $this;
     }
 
-//    public function end() : CGMethod
-//    {
-//        return $this->getParent();
-//    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Inflyter\CodeGenerator\Type;
 
 use Inflyter\CodeGenerator\Traits\HasAnnotationTrait;
+use Inflyter\CodeGenerator\Type\CGClass\CGConst;
 use Inflyter\CodeGenerator\Type\CGClass\CGMethod;
 use Inflyter\CodeGenerator\Type\CGClass\CGProperty;
 use Inflyter\CodeGenerator\Traits\HasUsesUseStatementsFromParentTrait;
@@ -25,6 +26,9 @@ class CGClass extends AbstractCGType
      */
     private array $methods = [];
 
+    /** @var CGConst[] */
+    private array $consts = [];
+
     private ?string $extends = null;
 
     /**
@@ -33,9 +37,9 @@ class CGClass extends AbstractCGType
     private array $interfaces = [];
 
     /**
-     * @var string[]
+     * @var array<array{0:string, 1:?string}>
      */
-    private array $classUses = [];
+    private array $traits = [];
 
     public function setExtends(string $className) : self
     {
@@ -87,6 +91,22 @@ class CGClass extends AbstractCGType
         $this->properties[] = $p;
 
         return  $p;
+    }
+
+    public function addConst(string $name, string $value) : CGConst
+    {
+        $c = new CGConst($this, $name);
+
+        $c->setDefaultValue($value);
+
+        $this->consts[] = $c;
+
+        return $c;
+    }
+
+    public function hasConsts() : bool
+    {
+        return !empty($this->consts);
     }
 
     public function addProprietyTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
@@ -171,35 +191,33 @@ class CGClass extends AbstractCGType
             ->addBlank()
         ;
 
-        if ($this->hasClassUses()) {
-            $uses = array_unique($this->classUses);
+        if ($this->hasTraits()) {
+            $uses = [];
 
-            foreach ($uses as $use) {
-                $this->addCodeLine("use $use;");
+            foreach ($this->traits as [$use, $as]) {
+                if (isset($uses[$use])) {
+                    continue;
+                }
+
+                $theUse = "use $use" . ($as !== null ? " as $as;" : ';');
+                $this->addCodeLine($theUse);
+
+                $uses[$use] = 1;
             }
 
             $this->addBlank();
         }
 
-        if ($this->hasProperties()) {
-            $this->sortByVisibility($this->properties);
+        if ($this->hasConsts()) {
+            $this->generateClassInternalElements($this->consts);
+        }
 
-            foreach ($this->properties as $property) {
-                $this
-                    ->addCodeBlock($property->generateCode())
-                    ->addBlank()
-                ;
-            }
+        if ($this->hasProperties()) {
+            $this->generateClassInternalElements($this->properties);
         }
 
         if ($this->hasMethods()) {
-            $this->sortByVisibility($this->methods);
-
-            foreach ($this->methods as $method) {
-                $this
-                    ->addCodeBlock($method->generateCode()) //GCFunction adds a blank
-                ;
-            }
+            $this->generateClassInternalElements($this->methods, false);
         }
 
         $this
@@ -210,20 +228,44 @@ class CGClass extends AbstractCGType
         return $this->getFormattedCode();
     }
 
-    public function addClassUse(string $use) : self
+    private function generateClassInternalElements(array $items, bool $addBlack = true) : void
     {
-        $this->classUses[] = $use;
+        $this->sortByVisibility($items);
+
+        foreach ($items as $item) {
+            $this
+                ->addCodeBlock($item->generateCode())
+                ->addBlankIf($addBlack)
+            ;
+        }
+    }
+
+    public function addTrait(string $fullTraitPath, ?string $as = null, bool $passToParentAddUseStatement = true) : self
+    {
+        if ($passToParentAddUseStatement) {
+            $this->addUseStatement($fullTraitPath);
+        }
+
+        $this->traits[] = [$this->getClassName($fullTraitPath), $as];
         return $this;
     }
 
-    public function getClassUses() : array
+    private function getClassName(string $fullyQualifiedClassName) : string
     {
-        return $this->classUses;
+        if ($pos = strrpos($fullyQualifiedClassName, '\\')) {
+            return substr($fullyQualifiedClassName, $pos + 1);
+        }
+        return $fullyQualifiedClassName;
     }
 
-    public function hasClassUses() : bool
+    public function getTraits() : array
     {
-        return !empty($this->classUses);
+        return $this->traits;
+    }
+
+    public function hasTraits() : bool
+    {
+        return !empty($this->traits);
     }
 
     /**
@@ -237,19 +279,16 @@ class CGClass extends AbstractCGType
                     return 0;
                 }
 
-                if ($a->getVisibility() === 'public')
+                if ($a->getVisibility() === 'public') {
                     return 1;
+                }
 
-                if ($b->getVisibility() === 'public')
+                if ($b->getVisibility() === 'public') {
                     return -1;
+                }
 
                 return 0;
             }
         );
     }
-
-//    public function end() : static
-//    {
-//        return parent::end();
-//    }
 }

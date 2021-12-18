@@ -5,6 +5,7 @@ namespace Inflyter\CodeGenerator\Type\CGClass;
 
 
 use Inflyter\CodeGenerator\Traits\HasEndClassReturn;
+use Inflyter\CodeGenerator\Traits\HasStaticAccess;
 use Inflyter\CodeGenerator\Traits\HasVisibilityTrait;
 use Inflyter\CodeGenerator\Type\AbstractFunction;
 use Inflyter\CodeGenerator\Type\CGClass;
@@ -14,21 +15,28 @@ class CGMethod extends AbstractFunction implements CGVisibilityInterface
 {
     use HasVisibilityTrait;
     use HasEndClassReturn;
+    use HasStaticAccess;
 
     public function generateCode(): string
     {
-        return $this->getVisibility() . ' ' . parent::generateCode();
+        if ($this->isAnonymous()) {
+            throw new \RuntimeException('A method can\'t be an anonymous function');
+        }
+
+        return $this->getVisibility() . ' '. parent::generateCode();
     }
 
-    public function setHasReturnType(bool $hasReturnType): CGMethod
-    {
-        return parent::setHasReturnType($hasReturnType);
-    }
+//    public function setHasReturnType(bool $hasReturnType): static
+//    {
+//        return parent::setHasReturnType($hasReturnType);
+//    }
 
     public function addParameter(string $name, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
     {
-        $p = new CGMethodParameter($this, $name);
-        return $this->addParameterInternal($p, $type, $defaultValue, $isNull);
+        return $this->addParameterInternal(
+            new CGMethodParameter($this, $name),
+            $type, $defaultValue, $isNull
+        );
     }
 
     public function addParameterTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter

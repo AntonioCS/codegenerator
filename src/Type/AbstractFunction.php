@@ -97,7 +97,7 @@ abstract class AbstractFunction extends AbstractCGType
         return $this->hasReturnType;
     }
 
-    public function setHasReturnType(bool $hasReturnType): AbstractCGType
+    public function setHasReturnType(bool $hasReturnType): static
     {
         $this->hasReturnType = $hasReturnType;
         return $this;
