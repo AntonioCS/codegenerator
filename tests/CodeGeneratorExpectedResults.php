@@ -76,14 +76,33 @@ CODE;
     public const EXPECTED_CLASS_CODE = <<<CODE
 <?php
 
+use Inflyter\CodeGenerator\Tests\CodeGeneratorTest_TestTrait;
+use Inflyter\CodeGenerator\Tests\CodeGeneratorTest_TestTrait2;
+
 class TestCls
 {
     
+    use CodeGeneratorTest_TestTrait;
+    use CodeGeneratorTest_TestTrait2 as DummyTrait;
+    
+    public const A_CONST = 123;
+    
     public \$bla;
+    
+    public static \$aStaticProperty;
+    
+    public int \$hadValue = 123;
+    
+    public ?string \$isNullValue = null;
     
     public function tes(): int
     {
         return 123;
+    }
+    
+    public static function aStaticMethod(): float
+    {
+        return 123.2;
     }
     
 }
