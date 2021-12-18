@@ -68,7 +68,7 @@ abstract class AbstractCGType implements CGTypeInterface
 
     //https://stackoverflow.com/a/3371773/8715
     //https://stackoverflow.com/a/60816979/8715
-    private function removedAllNonAsciiChars(string $value) : string
+    protected function removedAllNonAsciiChars(string $value) : string
     {
         $curLocale = setlocale(LC_ALL, 0); //gets current locale
         setlocale(LC_ALL, "en_US.utf8"); //without this iconv removes accented letters. If you use another locale it will also fail
