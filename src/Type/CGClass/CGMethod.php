@@ -8,9 +8,15 @@ use Inflyter\CodeGenerator\Traits\HasEndClassReturn;
 use Inflyter\CodeGenerator\Traits\HasStaticAccess;
 use Inflyter\CodeGenerator\Traits\HasVisibilityTrait;
 use Inflyter\CodeGenerator\Type\AbstractFunction;
-use Inflyter\CodeGenerator\Type\CGClass;
 use Inflyter\CodeGenerator\Type\CGVisibilityInterface;
 
+/**
+ * @method CGMethodParameter addParameterTypeBool(string $name, ?bool $defaultValue = null, bool $isNull = false)
+ * @method CGMethodParameter addParameterTypeInt(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGMethodParameter addParameterTypeFloat(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGMethodParameter addParameterTypeString(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGMethodParameter addParameterTypeArray(string $name, ?string $defaultValue = null, bool $isNull = false)
+ */
 class CGMethod extends AbstractFunction implements CGVisibilityInterface
 {
     use HasVisibilityTrait;
@@ -26,41 +32,10 @@ class CGMethod extends AbstractFunction implements CGVisibilityInterface
         return $this->getVisibility() . ' '. parent::generateCode();
     }
 
-//    public function setHasReturnType(bool $hasReturnType): static
-//    {
-//        return parent::setHasReturnType($hasReturnType);
-//    }
-
-    public function addParameter(string $name, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
+    public function addParameter(string $name, ?string $type = null, mixed $defaultValue = null, bool $isNull = false) : CGMethodParameter
     {
-        return $this->addParameterInternal(
-            new CGMethodParameter($this, $name),
-            $type, $defaultValue, $isNull
-        );
-    }
-
-    public function addParameterTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
-    {
-        return parent::addParameterTypeBool($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeInt(string $name, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
-    {
-        return parent::addParameterTypeInt($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeFloat(string $name, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
-    {
-        return parent::addParameterTypeFloat($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeString(string $name, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
-    {
-        return parent::addParameterTypeString($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeArray(string $name, ?string $defaultValue = null, bool $isNull = false) : CGMethodParameter
-    {
-        return parent::addParameterTypeArray($name, $defaultValue, $isNull);
+        $p = new CGMethodParameter($this, $name);
+        $this->addParameterInternal($p, $type, $defaultValue, $isNull);
+        return $p;
     }
 }

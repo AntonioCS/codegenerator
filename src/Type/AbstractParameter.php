@@ -16,11 +16,14 @@ abstract class AbstractParameter extends AbstractCGType
     use HasUsesNamespaceFromParentTrait;
     use HasTypeTrait;
 
-    private ?string $defaultValue = null;
+    private mixed $defaultValue = null;
 
-    private bool $hasQuotesOnDefaultValue = false;
+    private bool $doNotAddQuotesOnDefaultValueIfString = false;
+
+    private bool $useDoubleQuotesForString = false;
 
     protected bool $ignoreType = false;
+
     protected bool $noDollarSign = false;
 
     public function generateCode(): string
@@ -40,7 +43,16 @@ abstract class AbstractParameter extends AbstractCGType
 
         if ($this->hasDefaultValue()) {
             $code .= ' = ';
-            $surround = ($this->hasQuotesOnDefaultValue() || ($this->hasType() && $this->getTypes() === 'string')) ? "'" : null;
+            $surround = null;
+
+            if ($this->doNotAddQuotesOnDefaultValueIfString() === false && is_string($this->getDefaultValue())) {
+                $surround = ($this->isUseDoubleQuotesForString() ? '"' : "'");
+            }
+
+            if (is_bool($this->getDefaultValue()) || ($this->hasType() && $this->getTypes() === 'bool')) {
+                $this->setDefaultValue($this->getDefaultValue() ? 'true' : 'false');
+            }
+
             $code .= $surround . $this->getDefaultValue() . $surround;
         } elseif ($hasTypeAndIsNull) {
             $code .= ' = null';
@@ -56,12 +68,12 @@ abstract class AbstractParameter extends AbstractCGType
         return $this;
     }
 
-    public function getDefaultValue(): ?string
+    public function getDefaultValue(): mixed
     {
         return $this->defaultValue;
     }
 
-    public function setDefaultValue(?string $defaultValue): self
+    public function setDefaultValue(mixed $defaultValue): self
     {
         $this->defaultValue = $defaultValue;
         return $this;
@@ -69,18 +81,27 @@ abstract class AbstractParameter extends AbstractCGType
 
     public function hasDefaultValue() : bool
     {
-        return ($this->defaultValue !== null && $this->defaultValue !== '');
+        return ($this->defaultValue !== null);
     }
 
-    public function hasQuotesOnDefaultValue(): bool
+    public function doNotAddQuotesOnDefaultValueIfString(): bool
     {
-        return $this->hasQuotesOnDefaultValue;
+        return $this->doNotAddQuotesOnDefaultValueIfString;
     }
 
-    public function setHasQuotesOnDefaultValue(bool $hasQuotesOnDefaultValue): self
+    public function setDoNotAddQuotesOnDefaultValueIfString(bool $doNotAddQuotesOnDefaultValueIfString): self
     {
-        $this->hasQuotesOnDefaultValue = $hasQuotesOnDefaultValue;
+        $this->doNotAddQuotesOnDefaultValueIfString = $doNotAddQuotesOnDefaultValueIfString;
         return $this;
     }
 
+    public function isUseDoubleQuotesForString(): bool
+    {
+        return $this->useDoubleQuotesForString;
+    }
+
+    public function setUseDoubleQuotesForString(bool $useDoubleQuotesForString): void
+    {
+        $this->useDoubleQuotesForString = $useDoubleQuotesForString;
+    }
 }

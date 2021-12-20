@@ -3,8 +3,15 @@ declare(strict_types=1);
 
 namespace Inflyter\CodeGenerator\Type;
 
-use Inflyter\CodeGenerator\Traits\HasAnnotationTrait;
 
+/**
+ * @method CGParameter addParameterTypeBool(string $name, ?bool $defaultValue = null, bool $isNull = false)
+ * @method CGParameter addParameterTypeInt(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGParameter addParameterTypeFloat(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGParameter addParameterTypeString(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGParameter addParameterTypeArray(string $name, ?string $defaultValue = null, bool $isNull = false)
+ * @method CGFile end()
+ */
 class CGFunction extends AbstractFunction
 {
     public function addTextToAnnotation(string $text) : static
@@ -13,39 +20,10 @@ class CGFunction extends AbstractFunction
         return $this;
     }
 
-    public function end(): CGFile
-    {
-        return $this->getParent();
-    }
-
-    public function addParameter(string $name, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : CGParameter
+    public function addParameter(string $name, ?string $type = null, mixed $defaultValue = null, bool $isNull = false) : CGParameter
     {
         $p = new CGParameter($this, $name);
-        return $this->addParameterInternal($p, $type, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : CGParameter
-    {
-        return parent::addParameterTypeBool($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeInt(string $name, ?string $defaultValue = null, bool $isNull = false) : CGParameter
-    {
-        return parent::addParameterTypeInt($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeFloat(string $name, ?string $defaultValue = null, bool $isNull = false) : CGParameter
-    {
-        return parent::addParameterTypeFloat($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeString(string $name, ?string $defaultValue = null, bool $isNull = false) : CGParameter
-    {
-        return parent::addParameterTypeString($name, $defaultValue, $isNull);
-    }
-
-    public function addParameterTypeArray(string $name, ?string $defaultValue = null, bool $isNull = false) : CGParameter
-    {
-        return parent::addParameterTypeArray($name, $defaultValue, $isNull);
+        $this->addParameterInternal($p, $type, $defaultValue, $isNull);
+        return $p;
     }
 }

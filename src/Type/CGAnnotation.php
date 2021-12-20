@@ -15,12 +15,6 @@ class CGAnnotation extends AbstractCGType
     use HasUsesNamespaceFromParentTrait;
     use HasNoNamePassedInConstructor;
 
-//    public function __construct(AbstractCGType $parent, int $indentation = 0)
-//    {
-//        parent::__construct($parent, '', $indentation);
-//        $this->mustHaveParent();
-//    }
-
     public function generateCode(): string
     {
         $codeBackUp = $this->code;

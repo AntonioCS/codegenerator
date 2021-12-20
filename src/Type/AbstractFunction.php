@@ -151,7 +151,7 @@ abstract class AbstractFunction extends AbstractCGType
         return $this;
     }
 
-    protected function addParameterInternal(AbstractParameter $p, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
+    protected function addParameterInternal(AbstractParameter $p, ?string $type = null, mixed $defaultValue = null, bool $isNull = false): void
     {
         if ($type) {
             $p->setTypes($type);
@@ -163,35 +163,33 @@ abstract class AbstractFunction extends AbstractCGType
         $p->setIsNull($isNull);
 
         $this->params[] = $p;
-
-        return $p;
     }
 
-    abstract public function addParameter(string $name, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter;
+    abstract public function addParameter(string $name, ?string $type = null, mixed $defaultValue = null, bool $isNull = false) : AbstractParameter;
 
-    public function addParameterTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
+    public function addParameterTypeBool(string $name, ?bool $defaultValue = null, bool $isNull = false) : AbstractParameter
     {
-        return $this->addParameter($name, 'bool', $defaultValue ?? 'false', $isNull);
+        return $this->addParameter($name, 'bool', $defaultValue, $isNull);
     }
 
-    public function addParameterTypeInt(string $name, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
+    public function addParameterTypeInt(string $name, ?int $defaultValue = null, bool $isNull = false) : AbstractParameter
     {
-        return $this->addParameter($name, 'int', $defaultValue ?? '0', $isNull);
+        return $this->addParameter($name, 'int', $defaultValue, $isNull);
     }
 
-    public function addParameterTypeFloat(string $name, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
+    public function addParameterTypeFloat(string $name, ?float $defaultValue = null, bool $isNull = false) : AbstractParameter
     {
-        return $this->addParameter($name, 'float', $defaultValue ?? '0',$isNull);
+        return $this->addParameter($name, 'float', $defaultValue, $isNull);
     }
 
     public function addParameterTypeString(string $name, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
     {
-        return $this->addParameter($name, 'string', $defaultValue ?? "''",$isNull);
+        return $this->addParameter($name, 'string', $defaultValue,$isNull);
     }
 
-    public function addParameterTypeArray(string $name, ?string $defaultValue = null, bool $isNull = false) : AbstractParameter
+    public function addParameterTypeArray(string $name, ?array $defaultValue = null, bool $isNull = false) : AbstractParameter
     {
-        return $this->addParameter($name, 'array', $defaultValue ?? '[]',$isNull);
+        return $this->addParameter($name, 'array', $defaultValue, $isNull);
     }
 
     /**

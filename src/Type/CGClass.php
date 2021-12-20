@@ -80,7 +80,7 @@ class CGClass extends AbstractCGType
         return $this;
     }
 
-    public function addProperty(string $name, ?string $type = null, ?string $defaultValue = null, bool $isNull = false) : CGProperty
+    public function addProperty(string $name, ?string $type = null, mixed $defaultValue = null, bool $isNull = false) : CGProperty
     {
         $p = new CGProperty($this, $name);
 
@@ -93,7 +93,7 @@ class CGClass extends AbstractCGType
         return  $p;
     }
 
-    public function addConst(string $name, string $value) : CGConst
+    public function addConst(string $name, mixed $value) : CGConst
     {
         $c = new CGConst($this, $name);
 
@@ -109,29 +109,29 @@ class CGClass extends AbstractCGType
         return !empty($this->consts);
     }
 
-    public function addProprietyTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
+    public function addPropertyTypeBool(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
     {
         return $this->addProperty($name, 'bool', $defaultValue ?? 'false', $isNull);
     }
 
-    public function addProprietyTypeInt(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
+    public function addPropertyTypeInt(string $name, ?int $defaultValue = null, bool $isNull = false) : CGProperty
     {
-        return $this->addProperty($name, 'int', $defaultValue ?? '0', $isNull);
+        return $this->addProperty($name, 'int', $defaultValue, $isNull);
     }
 
-    public function addProprietyTypeFloat(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
+    public function addPropertyTypeFloat(string $name, ?float $defaultValue = null, bool $isNull = false) : CGProperty
     {
-        return $this->addProperty($name, 'float', $defaultValue ?? '0',$isNull);
+        return $this->addProperty($name, 'float', $defaultValue,$isNull);
     }
 
-    public function addProprietyTypeString(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
+    public function addPropertyTypeString(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
     {
-        return $this->addProperty($name, 'string', $defaultValue ?? "''",$isNull);
+        return $this->addProperty($name, 'string', $defaultValue,$isNull);
     }
 
-    public function addProprietyTypeArray(string $name, ?string $defaultValue = null, bool $isNull = false) : CGProperty
+    public function addPropertyTypeArray(string $name, ?array $defaultValue = null, bool $isNull = false) : CGProperty
     {
-        return $this->addProperty($name, 'array', $defaultValue ?? '[]',$isNull);
+        return $this->addProperty($name, 'array', $defaultValue,$isNull);
     }
 
     public function hasProperties() : bool
@@ -156,8 +156,9 @@ class CGClass extends AbstractCGType
     {
         if ($this->hasMethods()) {
             foreach ($this->methods as $method) {
-                if ($method->getName() === $name)
+                if ($method->getName() === $name) {
                     return $method;
+                }
             }
         }
 
